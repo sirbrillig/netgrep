@@ -37,9 +37,10 @@ function! RunNetGrep(pattern, ...)
 
   execute "silent redir! > " . tmpfile
   silent echon '[Search results for pattern: ' . a:pattern . " in " . grep_dir . "]\n"
+  let s:results = system("ssh " . server_name . " 'grep -Irn " . a:pattern . " " . grep_dir . "' ")
+  silent echon s:results
   redir END
 
-  execute "silent !ssh " . server_name . " 'grep -Irn " . a:pattern . " " . grep_dir . "' >> " . tmpfile
   execute 'silent !sed -i.bak "s/^\//scp:\/\/' . server_name . '\/\//" ' . tmpfile
 
   execute "silent cgetfile " . tmpfile
@@ -67,10 +68,10 @@ function! RunNetFind(pattern)
 
   execute "silent redir! > " . temp_file
   silent echon '[Search results for file matching: ' . a:pattern . " on " . server_name . "]\n"
-  redir END
-
   " TODO: replace ~ with a path name like RunNetGrep uses
-  execute "silent !ssh " . server_name . " 'find ~ -name ". a:pattern ." -printf match:\\%p\\\\n' >> " . temp_file
+  let s:results = system("ssh " . server_name . " 'find ~ -name ". a:pattern ." -printf match:\\%p\\\\n'")
+  silent echon s:results
+  redir END
 
   execute 'silent !sed -i.bak "s/^match:\//match:scp:\/\/' . server_name . '\/\//" ' . temp_file
 
