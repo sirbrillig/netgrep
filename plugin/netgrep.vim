@@ -92,14 +92,14 @@ function! RunNetFind(pattern, ...)
 
   execute "silent redir! > " . temp_file
   silent echon '[Search results for file matching: ' . a:pattern . " on " . server_name . " in " . find_dir . "]\n"
-  let s:results = system("ssh " . server_name . " 'find " . find_dir . " -name ". a:pattern ." -printf match:\\%p\\\\n'")
+  let s:results = system("ssh " . server_name . " 'find " . find_dir . " -name ". a:pattern ." -printf match:\\%p:1:\\\\n'")
   silent echon s:results
   redir END
 
   execute 'silent !sed -i.bak "s/^match:\//match:scp:\/\/' . server_name . '\/\//" ' . temp_file
 
   " Make sure that quickfix can read the output
-  set errorformat+=match:%f
+  set errorformat+=match:%f:%l:
 
   execute "silent cgetfile " . temp_file
   copen
