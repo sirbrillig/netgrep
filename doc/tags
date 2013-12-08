@@ -1,0 +1,9 @@
+NetFind	netgrep.txt	/*NetFind*
+NetGrep	netgrep.txt	/*NetGrep*
+NetGrepConfiguration	netgrep.txt	/*NetGrepConfiguration*
+NetGrepContents	netgrep.txt	/*NetGrepContents*
+NetGrepContributing	netgrep.txt	/*NetGrepContributing*
+NetGrepUsage	netgrep.txt	/*NetGrepUsage*
+g:NetGrep_default_directory	netgrep.txt	/*g:NetGrep_default_directory*
+g:NetGrep_server_name	netgrep.txt	/*g:NetGrep_server_name*
+netgrep.txt	netgrep.txt	/*netgrep.txt*
