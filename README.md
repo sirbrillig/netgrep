@@ -58,3 +58,12 @@ So, in a configuration file (like .vimrc), set the variables like so:
   let g:NetGrep_default_directory = '/home/username/'
 ```
 
+## Installation
+
+If you're using [Pathogen](https://github.com/tpope/vim-pathogen) and have git
+installed, it's very simple; just clone the project into your ~/.vim/bundle/ directory:
+
+```
+cd ~/.vim/bundle/
+git clone https://github.com/sirbrillig/netgrep
+```
