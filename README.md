@@ -45,7 +45,7 @@ fairly easily with an Internet search).
 ### `g:NetGrep_default_directory`
 
 This is the default directory used when running searches on the remote server.
-If no directory is specified when using |NetGrep| or |NetFind|, the directory in
+If no directory is specified when using `NetGrep` or `NetFind`, the directory in
 this variable will be used. If a path is specified in those commands, but the
 path is relative (not a full path), the default directory will be prepended to
 it. The default directory must end with a slash.
