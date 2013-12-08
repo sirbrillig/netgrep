@@ -1,18 +1,17 @@
-function! RunNetGrep(pattern, ...)
-  let tmpfile = tempname()
-
-  if exists('g:NetGrep_server_name') && exists('g:NetGrep_default_directory')
-    let server_name = g:NetGrep_server_name
+function! NetGrepPath(...)
+  if exists('g:NetGrep_default_directory')
     let default_directory = g:NetGrep_default_directory
   else
-    echom "Error: NetGrep requires g:NetGrep_server_name and g:NetGrep_default_directory"
-    return
+    echom "Error: NetGrep requires setting g:NetGrep_default_directory"
+    return ''
   endif
+
   let s:full_path = match(default_directory, '\v^[\~\/]')
   if s:full_path <# 0
     echom "Error: g:NetGrep_default_directory must be a full path"
-    return
+    return ''
   endif
+
   let s:full_path = match(default_directory, '\v\/$')
   if s:full_path <# 0
     echom "Error: g:NetGrep_default_directory must end with a slash"
@@ -33,6 +32,25 @@ function! RunNetGrep(pattern, ...)
     let grep_dir = default_directory . grep_dir
   endif
 
+  return grep_dir
+endfunction
+
+function! RunNetGrep(pattern, ...)
+  let tmpfile = tempname()
+
+  if exists('g:NetGrep_server_name')
+    let server_name = g:NetGrep_server_name
+  else
+    echom "Error: NetGrep requires g:NetGrep_server_name"
+    return
+  endif
+
+  if a:0 ==# 0
+    let grep_dir = NetGrepPath()
+  else
+    let grep_dir = NetGrepPath(a:1)
+  endif
+
   echom 'Searching for pattern: ' . a:pattern . " in " . grep_dir
 
   execute "silent redir! > " . tmpfile
@@ -49,7 +67,7 @@ function! RunNetGrep(pattern, ...)
   call delete(tmpfile)
 endfunction
 
-function! RunNetFind(pattern)
+function! RunNetFind(pattern, ...)
   if exists('g:NetGrep_server_name')
     let server_name = g:NetGrep_server_name
   else
@@ -64,12 +82,17 @@ function! RunNetFind(pattern)
 
   let temp_file = tempname()
 
-  echom 'Searching for file matching: ' . a:pattern . " on " . server_name
+  if a:0 ==# 0
+    let find_dir = NetGrepPath()
+  else
+    let find_dir = NetGrepPath(a:1)
+  endif
+
+  echom 'Searching for file matching: ' . a:pattern . " on " . server_name . " in " . find_dir
 
   execute "silent redir! > " . temp_file
-  silent echon '[Search results for file matching: ' . a:pattern . " on " . server_name . "]\n"
-  " TODO: replace ~ with a path name like RunNetGrep uses
-  let s:results = system("ssh " . server_name . " 'find ~ -name ". a:pattern ." -printf match:\\%p\\\\n'")
+  silent echon '[Search results for file matching: ' . a:pattern . " on " . server_name . " in " . find_dir . "]\n"
+  let s:results = system("ssh " . server_name . " 'find " . find_dir . " -name ". a:pattern ." -printf match:\\%p\\\\n'")
   silent echon s:results
   redir END
 
@@ -86,4 +109,4 @@ endfunction
 
 command! -nargs=* NetGrep call RunNetGrep(<f-args>)
 
-command! -nargs=1 NetFind call RunNetFind(<f-args>)
+command! -nargs=* NetFind call RunNetFind(<f-args>)
